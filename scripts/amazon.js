@@ -1,4 +1,4 @@
-import { cart } from "../data/cart.js";
+import { cart,addToCart } from "../data/cart.js";
 import { products } from "../data/products.js";
 
 let totalHtml = '';
@@ -57,43 +57,35 @@ products.forEach((product) => {
 })
 productGrid.innerHTML = totalHtml;
 
-document.querySelectorAll('.js-add-to-cart')
-.forEach((button) => {
-  let timeoutId;
-  button.addEventListener('click', () => {
-    const {productId} = button.dataset;
-    const quantityElem = document.querySelector(`.js-quantity-select-${productId}`);
-    const addedToCartELem = document.querySelector((`.js-added-to-cart-${productId}`));
-    const quantity = Number(quantityElem.value);
-    let matchingItem;
-    
-    cart.forEach((item) => {
-      if (productId == item.productId) {
-        matchingItem = item;
-      }
-    })
-    
-    if (matchingItem) {
-      matchingItem.quantity += quantity;
-    }else{
-      cart.push({
-        productId,
-        quantity,
-      });
-    }
-    
-    let cartQuantity = 0;
-    cart.forEach((item) => {
-      cartQuantity += item.quantity
+function updateCartQuantityElem() {
+  let cartQuantity = 0;
+    cart.forEach((cartItem) => {
+      cartQuantity += cartItem.quantity
     })
     
     document.querySelector('.js-cart-quantity')
     .innerHTML = cartQuantity;
+}
+
+document.querySelectorAll('.js-add-to-cart')
+.forEach((button) => {
+  let timeoutId;
+  button.addEventListener('click', () => {
+    console.log(timeoutId);
     
-    addedToCartELem.classList.add('show-added-message');
+    const {productId} = button.dataset;
+    const quantityElem = document.querySelector(`.js-quantity-select-${productId}`);
+    const addedToCartElem = document.querySelector((`.js-added-to-cart-${productId}`));
+    const quantity = Number(quantityElem.value);
+    
+    addToCart(productId, quantity);
+    
+    updateCartQuantityElem();
+    
+    addedToCartElem.classList.add('show-added-message');
     clearTimeout(timeoutId);
     timeoutId = setTimeout(() => {
-      addedToCartELem.classList.remove('show-added-message');
+      addedToCartElem.classList.remove('show-added-message');
     }, 3000);
   });
 });
