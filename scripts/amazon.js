@@ -71,8 +71,6 @@ document.querySelectorAll('.js-add-to-cart')
 .forEach((button) => {
   let timeoutId;
   button.addEventListener('click', () => {
-    console.log(timeoutId);
-    
     const {productId} = button.dataset;
     const quantityElem = document.querySelector(`.js-quantity-select-${productId}`);
     const addedToCartElem = document.querySelector((`.js-added-to-cart-${productId}`));
