@@ -209,3 +209,24 @@
   margin-top: 11px;
   margin-bottom: 15px;
 }
+
+.quantity-input{
+  width: 40px;
+  font-size: 15px;
+}
+
+.update-quantity{
+  display: none;
+}
+
+.is-updating-quantity .update-quantity{
+  display: initial;
+}
+
+.is-updating-quantity .update-quantity-link{
+  display: none;
+}
+
+.is-updating-quantity .quantity-label{
+  display: none;
+}
