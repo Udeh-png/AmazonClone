@@ -1,9 +1,10 @@
 import { cart, removeItem, updateQuantity, updateDeliveryOption } from "../../data/cart.js";
-import { products, getProductWithId } from "../../data/products.js"
+import { getProductWithId } from "../../data/products.js"
 import { formatCurrency } from "../utils/money.js";
 import { deliveryOptions, getDeliveryOptionWithId } from "../../data/deliveryOptions.js";
 import renderPaymentSummary  from "./paymentSummary.js";
 import dayjs from "https://unpkg.com/dayjs@1.11.10/esm/index.js";
+import isWeekend from "../utils/No-Weekend.js";
 
 function renderOrderSummary() {
   let totalHtml = '';
@@ -13,20 +14,18 @@ function renderOrderSummary() {
   
   let matchingDeliveryOption = getDeliveryOptionWithId(cartItem.deliveryOptionId);
     
-      const today = dayjs();
-      const addToToday = today.add(matchingDeliveryOption.deliveryDate, 'Days');
-      const formatAddToToday = addToToday.format('dddd, MMMM D');
+  const formatDeliveryDate = skipWeekend(matchingDeliveryOption.deliveryDate);
   
-    totalHtml += `
+  totalHtml += `
       <div class="cart-item-container js-cart-item-container-${cartItem.productId}">
         <div class="delivery-date js-delivery-date-${cartItem.productId}">
-          Delivery date: ${formatAddToToday}
+          Delivery date: ${formatDeliveryDate}
         </div>
-  
+
         <div class="cart-item-details-grid">
           <img class="product-image"
             src="${matchingProduct.image}">
-  
+
           <div class="cart-item-details">
             <div class="product-name">
               ${matchingProduct.name}
@@ -43,7 +42,7 @@ function renderOrderSummary() {
               </span>
               <input type="number" class="quantity-input update-quantity js-quantity-input-${cartItem.productId}">
               <span class="save-quantity-link js-save-quantity-link link-primary update-quantity"
-               data-product-id="${cartItem.productId}">
+                data-product-id="${cartItem.productId}">
                 Save
               </span>
               <span class="delete-quantity-link link-primary js-delete-quantity-link" 
@@ -52,7 +51,7 @@ function renderOrderSummary() {
               </span>
             </div>
           </div>
-  
+
           <div class="delivery-options">
             <div class="delivery-options-title">
               Choose a delivery option:
@@ -61,7 +60,8 @@ function renderOrderSummary() {
             
           </div>
         </div>
-      </div>`;
+      </div>
+    `;
   });
   document.querySelector('.js-order-summary').innerHTML = totalHtml;
   
@@ -69,9 +69,7 @@ function renderOrderSummary() {
     let deliveryOptionHtml = '';
     let priceString;
     deliveryOptions.forEach((deliveryOption) => {
-      const today = dayjs();
-      const addToToday = today.add(deliveryOption.deliveryDate, 'Days');
-      const formatAddToToday = addToToday.format('dddd, MMMM D');
+      const formatDeliveryDate = skipWeekend(deliveryOption.deliveryDate);
       const isChecked = cartItem.deliveryOptionId === deliveryOption.id;
       
       deliveryOptionHtml += `
@@ -84,7 +82,7 @@ function renderOrderSummary() {
           name="delivery-option-${cartItem.productId}">
         <div>
           <div class="delivery-option-date">
-            ${formatAddToToday}
+            ${formatDeliveryDate}
           </div>
           <div class="delivery-option-price">
             ${priceString = 
@@ -167,6 +165,25 @@ function renderOrderSummary() {
   }
   
   updateHeaderQuantityElem();
+}
+
+function skipWeekend(cartDaysToAdd) {
+  let today = dayjs();
+  let daysToAdd = cartDaysToAdd;
+  let count = 0;
+  let count1 = 0;
+
+  while (count < daysToAdd) {
+    today = today.add(1, 'Days');
+    count1++
+    const weekendCheck = today.format('dddd');
+
+    if (!isWeekend(weekendCheck)) {
+      count++;
+    }
+  }
+  
+  return today.format('dddd, MMMM D');
 }
 
 export default renderOrderSummary;
