@@ -1,25 +1,18 @@
 import { cart, removeItem, updateQuantity, updateDeliveryOption } from "../../data/cart.js";
-import { products } from "../../data/products.js"
+import { products, getProductWithId } from "../../data/products.js"
 import { formatCurrency } from "../utils/money.js";
-import { deliveryOptions } from "../../data/deliveryOptions.js";
+import { deliveryOptions, getDeliveryOptionWithId } from "../../data/deliveryOptions.js";
+import renderPaymentSummary  from "./paymentSummary.js";
 import dayjs from "https://unpkg.com/dayjs@1.11.10/esm/index.js";
 
 function renderOrderSummary() {
   let totalHtml = '';
   cart.forEach((cartItem) => {
-    let matchingProduct;
-    products.forEach((product) => {
-      if (cartItem.productId === product.id) {
-        matchingProduct = product;
-      }
-    });
+
+  let matchingProduct = getProductWithId(cartItem.productId);
   
-    let matchingDeliveryOption;
-    deliveryOptions.forEach((deliveryOption) => {
-      if (cartItem.deliveryOptionId === deliveryOption.id) {
-        matchingDeliveryOption = deliveryOption;
-      }
-    });
+  let matchingDeliveryOption = getDeliveryOptionWithId(cartItem.deliveryOptionId);
+    
       const today = dayjs();
       const addToToday = today.add(matchingDeliveryOption.deliveryDate, 'Days');
       const formatAddToToday = addToToday.format('dddd, MMMM D');
@@ -112,11 +105,12 @@ function renderOrderSummary() {
         const productToDeleteId = deleteButton.dataset.productId;
         const productToDeleteCard = document.querySelector(`.js-cart-item-container-${productToDeleteId}`);
   
-        removeItem(productToDeleteId);
+        removeItem(productToDeleteId); // Remove item from cart
+        renderPaymentSummary();
   
-        productToDeleteCard.remove();
+        productToDeleteCard.remove(); // Remove item from DOM
   
-        updateHeaderQuantityElem();
+        updateHeaderQuantityElem(); // Update header quantity
       });
     });
   
@@ -141,7 +135,8 @@ function renderOrderSummary() {
         const newQuantity = Number(quantityInputElem.value);
   
         if (newQuantity > 0) {
-          updateQuantity(productToUpdateId, newQuantity);
+          updateQuantity(productToUpdateId, newQuantity); // Update item quantity in cart
+          renderPaymentSummary();
   
           document.querySelector(`.js-quantity-label-${productToUpdateId}`)
             .innerHTML = newQuantity;
@@ -156,7 +151,8 @@ function renderOrderSummary() {
     .forEach((deliveryDate) => {
       deliveryDate.addEventListener('click', () => {
         const {productId, optionId} = deliveryDate.dataset;
-        updateDeliveryOption(productId, optionId);
+        updateDeliveryOption(productId, optionId); // Update delivery option in cart
+        renderPaymentSummary();
         renderOrderSummary();
       });
     });
