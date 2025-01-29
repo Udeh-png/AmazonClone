@@ -1,3 +1,6 @@
+import dayjs from "https://unpkg.com/dayjs@1.11.10/esm/index.js";
+import isWeekend from "../../scripts/utils/No-Weekend.js";
+
 export const deliveryOptions = [
 {
   id: '1',
@@ -25,4 +28,20 @@ export function getDeliveryOptionWithId(deliveryOptionId) {
     }
   });
   return matchingDeliveryOption;
+}
+
+export function calculateDeliveryDate(cartDaysToAdd) {
+  let today = dayjs();
+  let daysToAdd = cartDaysToAdd;
+  let count = 0;
+
+  while (count < daysToAdd) {
+    today = today.add(1, 'Days');
+    const weekendCheck = today.format('dddd');
+
+    if (!isWeekend(weekendCheck)) {
+      count++;
+    }
+  }
+  return today.format('dddd, MMMM D');
 }

@@ -1,10 +1,9 @@
 import { cart, removeItem, updateQuantity, updateDeliveryOption } from "../../data/cart.js";
 import { getProductWithId } from "../../data/products.js"
 import { formatCurrency } from "../utils/money.js";
-import { deliveryOptions, getDeliveryOptionWithId } from "../../data/deliveryOptions.js";
+import { deliveryOptions, getDeliveryOptionWithId, calculateDeliveryDate } from "../../data/deliveryOptions.js";
+import { updateHeaderQuantityElem } from "./checkoutHeader.js";
 import renderPaymentSummary  from "./paymentSummary.js";
-import dayjs from "https://unpkg.com/dayjs@1.11.10/esm/index.js";
-import isWeekend from "../utils/No-Weekend.js";
 
 function renderOrderSummary() {
   let totalHtml = '';
@@ -14,7 +13,7 @@ function renderOrderSummary() {
   
   let matchingDeliveryOption = getDeliveryOptionWithId(cartItem.deliveryOptionId);
     
-  const formatDeliveryDate = skipWeekend(matchingDeliveryOption.deliveryDate);
+  const formatDeliveryDate = calculateDeliveryDate(matchingDeliveryOption.deliveryDate);
   
   totalHtml += `
       <div class="cart-item-container js-cart-item-container-${cartItem.productId}">
@@ -69,7 +68,7 @@ function renderOrderSummary() {
     let deliveryOptionHtml = '';
     let priceString;
     deliveryOptions.forEach((deliveryOption) => {
-      const formatDeliveryDate = skipWeekend(deliveryOption.deliveryDate);
+      const formatDeliveryDate = calculateDeliveryDate(deliveryOption.deliveryDate);
       const isChecked = cartItem.deliveryOptionId === deliveryOption.id;
       
       deliveryOptionHtml += `
@@ -94,6 +93,8 @@ function renderOrderSummary() {
       </div>
     `
     })
+    console.log("re-rendered");
+    
     return deliveryOptionHtml;
   }
   
@@ -104,9 +105,10 @@ function renderOrderSummary() {
         const productToDeleteCard = document.querySelector(`.js-cart-item-container-${productToDeleteId}`);
   
         removeItem(productToDeleteId); // Remove item from cart
+
         renderPaymentSummary();
-  
-        productToDeleteCard.remove(); // Remove item from DOM
+
+        renderOrderSummary();
   
         updateHeaderQuantityElem(); // Update header quantity
       });
@@ -135,10 +137,8 @@ function renderOrderSummary() {
         if (newQuantity > 0) {
           updateQuantity(productToUpdateId, newQuantity); // Update item quantity in cart
           renderPaymentSummary();
-  
-          document.querySelector(`.js-quantity-label-${productToUpdateId}`)
-            .innerHTML = newQuantity;
-    
+          renderOrderSummary();
+
           productToUpdateCard.classList.remove('is-updating-quantity');
           updateHeaderQuantityElem(); 
         }
@@ -154,36 +154,8 @@ function renderOrderSummary() {
         renderOrderSummary();
       });
     });
-  
-  function updateHeaderQuantityElem() {
-    let totalCartQuantity = 0;
-    const cartQuantityElem = document.querySelector('.js-return-to-home-link');
-    cart.forEach((cartItem) => {
-      totalCartQuantity+=cartItem.quantity;
-    });
-    cartQuantityElem.innerHTML = `${totalCartQuantity} Items`;
-  }
-  
+
   updateHeaderQuantityElem();
-}
-
-function skipWeekend(cartDaysToAdd) {
-  let today = dayjs();
-  let daysToAdd = cartDaysToAdd;
-  let count = 0;
-  let count1 = 0;
-
-  while (count < daysToAdd) {
-    today = today.add(1, 'Days');
-    count1++
-    const weekendCheck = today.format('dddd');
-
-    if (!isWeekend(weekendCheck)) {
-      count++;
-    }
-  }
-  
-  return today.format('dddd, MMMM D');
 }
 
 export default renderOrderSummary;
