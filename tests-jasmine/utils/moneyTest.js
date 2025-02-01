@@ -1,4 +1,4 @@
-import { formatCurrency } from "../scripts/utils/money.js";
+import { formatCurrency } from "../../scripts/utils/money.js";
 
 describe('test suite: formatCurrency', () => {
   it('works with whole numbers', () => {
@@ -13,4 +13,3 @@ describe('test suite: formatCurrency', () => {
     expect(formatCurrency(2009.89)).toEqual('20.10')
   })
 })
-
