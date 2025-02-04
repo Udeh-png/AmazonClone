@@ -50,6 +50,12 @@ export function addToCart(productId, quantity) {
 }
 
 export function removeItem(productToDeleteId) {
+  let productIsInCart = false;
+  cart.forEach((cartItem) => {
+    if (cartItem.productId === productToDeleteId) {
+      productIsInCart = true;
+    }
+  });
   let newCart = cart.filter((cartItem) => cartItem.productId !== productToDeleteId);
   cart = newCart;
   saveCartInLocalStorage();

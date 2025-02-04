@@ -1,14 +1,11 @@
 import { renderOrderSummary } from "../../scripts/checkout/orderSummary.js";
 import { cart, loadFromLocalStorage } from "../../data/cart.js";
+import renderPaymentSummary from "../../scripts/checkout/paymentSummary.js";
+
+const productId1 = 'e43638ce-6aa0-4b85-b27f-e1d07eb678c6';
+const productId2 = '15b6fc6f-327a-4ec4-896f-486349e85a3d';
 
 describe('test suite: renderOrderSummary', () => {
-  const productId1 = 'e43638ce-6aa0-4b85-b27f-e1d07eb678c6';
-  const productId2 = '15b6fc6f-327a-4ec4-896f-486349e85a3d';
-
-  afterEach(() => {
-    document.querySelector('.js-test-container')
-      .innerHTML = ``;
-  });
 
   beforeEach(() => {
     spyOn(localStorage, 'getItem').and.callFake(() => {
@@ -25,6 +22,8 @@ describe('test suite: renderOrderSummary', () => {
       ]);
     });
 
+    spyOn(localStorage, 'setItem').and.callFake(() => {});
+
     document.querySelector('.js-test-container')
     .innerHTML = `
       <div class="js-return-to-home-link"></div>
@@ -34,44 +33,100 @@ describe('test suite: renderOrderSummary', () => {
     
     loadFromLocalStorage();
 
-    renderOrderSummary();
+    renderOrderSummary();  
   });
 
-  it('displays the cart', () => {
-    expect(
-      document.querySelectorAll('.js-cart-item-container').length
-    ).toEqual(2)
-
-    expect(
-      document.querySelector(`.js-cart-item-container-${productId1}`)
-    ).not.toEqual(null)
-
-    expect(
-      document.querySelector(`.js-cart-item-container-${productId2}`)
-    ).not.toEqual(null)
-
-    expect(
-      document.querySelector(`.js-product-quantity${productId1}`).innerText
-    ).toContain('Quantity: 2')
-
-    expect(
-      document.querySelector(`.js-product-quantity${productId2}`).innerText
-    ).toContain('Quantity: 1')
+  afterEach(() => {
+    document.querySelector('.js-test-container')
+      .innerHTML = ``;
   });
 
-  it('remove from cart', () => {
-    document.querySelector(`.js-delete-quantity-link-${productId1}`).click();
+  describe('displays the cart correctly', () => {
+    it('renders the correct number of cart items', () => {
+      expect(document.querySelectorAll('.js-cart-item-container').length)
+        .toEqual(2);
+    });
+  
+    it('renders the products in the cart', () => {
+      expect(document.querySelector(`.js-cart-item-container-${productId1}`))
+        .not.toEqual(null);
+      expect(document.querySelector(`.js-cart-item-container-${productId2}`))
+        .not.toEqual(null);
+    });
+  
+    it('displays the correct quantities', () => {
+      expect(document.querySelector(`.js-product-quantity-${productId1}`).innerText)
+        .toContain('Quantity: 2');
 
-    expect(
-      document.querySelector(`.js-cart-item-container-${productId1}`)
-    ).toEqual(null);
+      expect(document.querySelector(`.js-product-quantity-${productId2}`).innerText)
+        .toContain('Quantity: 1');
+    });
+  
+    it('displays the correct name of the products', () => {
+      expect(document.querySelector(`.js-product-name-${productId1}`).innerText)
+        .toEqual('Black and Gray Athletic Cotton Socks - 6 Pairs');
 
-    expect(
-      document.querySelector(`.js-cart-item-container-${productId2}`)
-    ).not.toEqual(null);
+      expect(document.querySelector(`.js-product-name-${productId2}`).innerText)
+        .toEqual('Intermediate Size Basketball');
+    });
+  
+    it('displays the correct price of the products', () => {
+      expect(document.querySelector(`.js-product-price-${productId1}`).innerText)
+        .toEqual('$10.90');
+      expect(document.querySelector(`.js-product-price-${productId2}`).innerText)
+        .toEqual('$20.95');
+    });
+  });
 
-    expect(cart.length).toEqual(1);
+  describe('removes from cart display', () => {
+    beforeEach(() => {
+      document.querySelector(`.js-delete-quantity-link-${productId1}`).click();      
+    });
 
-    expect(cart[0].productId).toEqual(productId2);
+    it('removes product 1 from the cart', () => {
+      expect(document.querySelector(`.js-cart-item-container-${productId1}`))
+        .toEqual(null);
+    });
+  
+    it('keeps product 2 in the cart', () => {
+      expect(document.querySelector(`.js-cart-item-container-${productId2}`))
+        .not.toEqual(null);
+    });
+  
+    it('cart contains only one item', () => {
+      expect(cart.length)
+        .toEqual(1);
+    });
+  
+    it('cart contains only product 2', () => {
+      expect(cart[0].productId)
+        .toEqual(productId2);
+    });
+  });
+
+  describe('updates delivery option display', () => {
+    beforeEach(() =>{
+      document.querySelector(`.js-delivery-option-${productId1}-${3}`).click();
+    });
+    it('check the right radio button', () => {
+      expect(
+        document.querySelector(`.js-delivery-option-input-${productId1}-${3}`).checked
+      ).toEqual(true);
+    });
+
+    it('updates the right delivery option', () => {
+      expect(cart[0].deliveryOptionId).toEqual('3');
+    });
+
+    it('updates payment summary', () => {
+      renderOrderSummary();
+      expect(
+      document.querySelector('.js-payment-summary-money-shipping').innerText
+      ).toEqual('$14.98');
+
+      expect(
+        document.querySelector('.js-payment-summary-money-total').innerText
+        ).toEqual('$63.50');
+    });
   });
 });
