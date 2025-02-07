@@ -13,7 +13,7 @@ export function renderOrderSummary() {
   
   let matchingDeliveryOption = getDeliveryOptionWithId(cartItem.deliveryOptionId);
     
-  const formatDeliveryDate = calculateDeliveryDate(matchingDeliveryOption.deliveryDate);
+  const formatDeliveryDate = calculateDeliveryDate(matchingDeliveryOption.deliveryDate, new Date);
   
   totalHtml += `
       <div class="cart-item-container js-cart-item-container js-cart-item-container-${cartItem.productId}">
@@ -72,7 +72,7 @@ export function renderOrderSummary() {
     let deliveryOptionHtml = '';
     let priceString;
     deliveryOptions.forEach((deliveryOption) => {
-      const formatDeliveryDate = calculateDeliveryDate(deliveryOption.deliveryDate);
+      const formatDeliveryDate = calculateDeliveryDate(deliveryOption.deliveryDate, new Date);
       const isChecked = cartItem.deliveryOptionId === deliveryOption.id;
       
       deliveryOptionHtml += `

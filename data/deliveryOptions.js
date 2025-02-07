@@ -30,8 +30,8 @@ export function getDeliveryOptionWithId(deliveryOptionId) {
   return matchingDeliveryOption;
 }
 
-export function calculateDeliveryDate(cartDaysToAdd) {
-  let today = dayjs();
+export function calculateDeliveryDate(cartDaysToAdd, startDate) {
+  let today = dayjs(startDate);
   let daysToAdd = cartDaysToAdd;
   let count = 0;
 
