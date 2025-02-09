@@ -1,14 +1,14 @@
 class Cart {
   cartItems;
-  localStorageKey;
+  #localStorageKey;
 
   constructor(localStorageKey) {
-    this.localStorageKey = localStorageKey;
-    this.loadFromLocalStorage();
+    this.#localStorageKey = localStorageKey;
+    this.#loadFromLocalStorage();
   }
 
-  loadFromLocalStorage() {
-    this.cartItems = JSON.parse(localStorage.getItem(this.localStorageKey)) || [
+  #loadFromLocalStorage() {
+    this.cartItems = JSON.parse(localStorage.getItem(this.#localStorageKey)) || [
       {
         productId: 'e43638ce-6aa0-4b85-b27f-e1d07eb678c6',
         quantity: 2,
@@ -30,8 +30,7 @@ class Cart {
   };
 
   saveCartInLocalStorage() {
-    console.log('l');
-    localStorage.setItem(this.localStorageKey, JSON.stringify(this.cartItems));
+    localStorage.setItem(this.#localStorageKey, JSON.stringify(this.cartItems));
   };
 
   addToCart(productId, quantity = 1) {
@@ -72,7 +71,7 @@ class Cart {
         cartItem.quantity = newQuantity;
       }
     })
-    saveCartInLocalStorage();
+    this.saveCartInLocalStorage();
   };
 
   updateDeliveryOption(productId, deliveryOptionId) {
@@ -87,9 +86,5 @@ class Cart {
   }
 };
 const cart = new Cart('cart-oop');
-cart.addToCart('54e0eccd-8f36-462b-b68a-8182611d9add');
 
 const businessCart = new Cart('cart-business');
-
-console.log(cart);
-console.log(businessCart);
