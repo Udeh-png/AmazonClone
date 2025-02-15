@@ -154,7 +154,7 @@ export function renderOrderSummary() {
     });
 
   updateHeaderQuantityElem();
-  renderPaymentSummary
+  renderPaymentSummary();
 }
 
 export default renderOrderSummary;

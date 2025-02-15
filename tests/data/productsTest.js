@@ -1,4 +1,4 @@
-import { Product, Clothing, Appliance, products } from "../../data/products.js";
+import { Product, Clothing, Appliance, products, loadProducts } from "../../data/products.js";
 
 const normalProduct = {
   id: "e43638ce-6aa0-4b85-b27f-e1d07eb678c6",
@@ -52,6 +52,12 @@ const applianceProduct = {
   instructionsLink: 'images/appliance-instructions.png',
   warrantyLink: 'images/appliance-warranty.png',
 };
+
+beforeAll((done) => {
+  loadProducts(() => {
+    done();
+  })
+})
 
 describe('test suite: Products Class', () => {
   let product = new Product(normalProduct);
