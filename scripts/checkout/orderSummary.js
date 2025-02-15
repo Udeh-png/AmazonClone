@@ -106,8 +106,6 @@ export function renderOrderSummary() {
         const productToDeleteId = deleteButton.dataset.productId;
         removeItem(productToDeleteId); // Remove item from cart
 
-        renderPaymentSummary();
-
         renderOrderSummary();
   
         updateHeaderQuantityElem(); // Update header quantity        
@@ -136,7 +134,7 @@ export function renderOrderSummary() {
   
         if (newQuantity > 0) {
           updateQuantity(productToUpdateId, newQuantity); // Update item quantity in cart
-          renderPaymentSummary();
+          
           renderOrderSummary();
 
           productToUpdateCard.classList.remove('is-updating-quantity');
@@ -150,12 +148,13 @@ export function renderOrderSummary() {
       deliveryDate.addEventListener('click', () => {
         const {productId, optionId} = deliveryDate.dataset;
         updateDeliveryOption(productId, optionId); // Update delivery option in cart
-        renderPaymentSummary();
+
         renderOrderSummary();
       });
     });
 
   updateHeaderQuantityElem();
+  renderPaymentSummary
 }
 
 export default renderOrderSummary;
