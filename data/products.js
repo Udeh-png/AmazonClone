@@ -8,7 +8,6 @@ export function getProductWithId(productId) {
     }
   });
   return matchingProduct;
-  
 }
 
 export class Product {

@@ -1,5 +1,6 @@
 import { cart,addToCart } from "../data/cart.js";
 import { loadProducts, products } from "../data/products.js";
+import { updateCartQuantityElem } from "./utils/amazonHeader.js";
 
 function renderHomePage() {
   let totalHtml = '';
@@ -61,18 +62,6 @@ function renderHomePage() {
     `;
   })
   productGrid.innerHTML = totalHtml;
-
-  function updateCartQuantityElem() {
-    let cartQuantity = 0;
-      cart.forEach((cartItem) => {
-        cartQuantity += cartItem.quantity
-      })
-      
-      if (cartQuantity > 0) {
-        document.querySelector('.js-cart-quantity')
-        .innerHTML = cartQuantity;
-      }
-  }
 
   document.querySelectorAll('.js-add-to-cart')
   .forEach((button) => {
