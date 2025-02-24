@@ -6,7 +6,7 @@ export function updateCartQuantityElem() {
       cartQuantity += cartItem.quantity
     })
     
-    if (cartQuantity > 0) {
+    if (cartQuantity >= 0) {
       document.querySelector('.js-cart-quantity')
       .innerHTML = cartQuantity;
     }

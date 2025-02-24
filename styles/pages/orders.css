@@ -146,6 +146,18 @@
   justify-content: center;
 }
 
+.after-added{
+  display: none;
+}
+
+.added-to-cart .after-added{
+  display: initial;
+}
+
+.added-to-cart .before-added{
+  display: none;
+}
+
 .buy-again-icon {
   width: 25px;
   margin-right: 15px;

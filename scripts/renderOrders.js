@@ -2,6 +2,7 @@ import { getProductWithId, loadProductsFetch } from "../data/products.js";
 import { formatCurrency } from "./utils/money.js";
 import { orders } from "../data/order.js";
 import { updateCartQuantityElem } from "./utils/amazonHeader.js";
+import { addToCart } from "../data/cart.js";
 
 function renderOrders() {
   let products;
@@ -47,7 +48,7 @@ function renderOrders() {
         <image src = "${product.image}">
       </div>
       
-      <div class="product-details">
+      <div class="product-details-${orderProduct.productId}">
         <div class="product-name">
           ${product.name}
         </div>
@@ -57,10 +58,13 @@ function renderOrders() {
         <div class="product-quantity">
           Quantity: ${orderProduct.quantity}
         </div>
-        <button class="buy-again-button button-primary">
-          <img class="buy-again-icon" src="images/icons/buy-again.png">
-          <span class="buy-again-message">
+        <button class="buy-again-button button-primary js-buy-again-button" data-product-id="${orderProduct.productId}">
+          <img class="buy-again-icon js-buy-again-icon before-added" src="images/icons/buy-again.png">
+          <span class="before-added">
             Buy it again
+          </span>
+          <span class="after-added">
+            &checkmark; Added
           </span>
         </button>
       </div>
@@ -76,8 +80,25 @@ function renderOrders() {
     })
     return totalHtml;
   }
-
   updateCartQuantityElem();
+
+  let timeOutId;
+  
+  document.querySelectorAll('.js-buy-again-button')
+    .forEach((buyAgainButton) => {
+      buyAgainButton.addEventListener('click', () => {
+        const orderProductId = buyAgainButton.dataset.productId;
+
+        document.querySelector(`.product-details-${orderProductId}`).classList.add('added-to-cart');
+        addToCart(orderProductId, 1);
+        updateCartQuantityElem();
+
+        clearTimeout(timeOutId);
+        timeOutId = setTimeout(() => {
+        document.querySelector(`.product-details-${orderProductId}`).classList.remove('added-to-cart');
+        }, 1000);
+      });
+    })
 }
 
 loadProductsFetch().then(() => {

@@ -210,6 +210,12 @@
   margin-bottom: 15px;
 }
 
+.place-order-button:disabled{
+  opacity: .5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
 .quantity-input{
   width: 40px;
   font-size: 15px;
@@ -229,4 +235,12 @@
 
 .is-updating-quantity .quantity-label{
   display: none;
+}
+
+.view-products-button{
+  margin-top: 10px;
+  width: 135px;
+  font-size: 16px;
+  font-weight: 100;
+  padding: 8px;
 }
