@@ -30,7 +30,7 @@ function renderOrders() {
       </div>
       
       <div class="order-details-grid">
-      ${renderOrderProducts()}
+      ${renderOrderProducts(order)}
       </div>
     </div>
     `
@@ -39,7 +39,7 @@ function renderOrders() {
   document.querySelector('.js-orders-grid')
   .innerHTML = totalHtml;
   
-  function renderOrderProducts() {
+  function renderOrderProducts(order) {
     let totalHtml = '';
     products.forEach((orderProduct) => {
       const product = getProductWithId(orderProduct.productId);
@@ -70,11 +70,12 @@ function renderOrders() {
       </div>
       
       <div class="product-actions">
-        <a href="tracking.html">
-          <button class="track-package-button button-secondary">
-            Track package
-          </button>
-        </a>
+        <button
+        class="track-package-button button-secondary js-track-package-button"
+        data-product-id="${orderProduct.productId}"
+        data-order-id="${order.id}">
+          Track package
+        </button>
       </div>
       `
     })
@@ -99,9 +100,18 @@ function renderOrders() {
         }, 1000);
       });
     })
+
+  document.querySelectorAll('.js-track-package-button')
+    .forEach((trackOrderButton) => {
+      trackOrderButton.addEventListener('click', () => {
+        const productId = trackOrderButton.dataset.productId;
+        const orderId = trackOrderButton.dataset.orderId;
+
+        location.href = `tracking.html?productId=${productId}&orderId=${orderId}`
+      });
+    });
 }
 
 loadProductsFetch().then(() => {
   renderOrders();
 })
-  
