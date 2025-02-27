@@ -1,6 +1,6 @@
 import { getOrderProductWithId, getOrderWithId } from "../data/order.js";
 import { getProductWithId, loadProducts, loadProductsFetch } from "../data/products.js";
-import { updateCartQuantityElem } from "./utils/amazonHeader.js";
+import { searchFromOtherPages, updateCartQuantityElem } from "./utils/amazonHeader.js";
 
 const params = new URLSearchParams(window.location.search);
 const productId = params.get("productId");
@@ -47,6 +47,8 @@ function renderTrackingPage() {
 
   updateCartQuantityElem();
 }
+
+searchFromOtherPages();
 
 loadProductsFetch().then(() => {
   renderTrackingPage();

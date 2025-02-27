@@ -16,12 +16,14 @@ export class Product {
   name;
   rating;
   priceCents;
+  keywords;
   constructor(productDescription) {
     this.id = productDescription.id;
     this.image = productDescription.image;
     this.name = productDescription.name;
     this.rating = productDescription.rating;
     this.priceCents = productDescription.priceCents;
+    this.keywords = productDescription.keywords;
   }
 
   getStatsUrl() {
@@ -87,7 +89,8 @@ export function loadProductsFetch() {
         : new Product(productDescription);
       });
       console.log('loaded');
-    }).catch((error) => {
+      return products;
+    }).catch(() => {
       alert("Something Went Wrong, Try Again Later");
     })
     return promise;

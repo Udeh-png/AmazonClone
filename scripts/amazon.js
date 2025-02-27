@@ -1,10 +1,10 @@
-import { cart,addToCart } from "../data/cart.js";
-import { loadProducts, products } from "../data/products.js";
-import { updateCartQuantityElem } from "./utils/amazonHeader.js";
+import { addToCart } from "../data/cart.js";
+import { loadProductsFetch, products as mainProducts } from "../data/products.js";
+import { search, updateCartQuantityElem } from "./utils/amazonHeader.js";
 
-function renderHomePage() {
+const productGrid = document.querySelector('.js-product-grid')
+function renderHomePage(products=mainProducts) {
   let totalHtml = '';
-  const productGrid = document.querySelector('.js-product-grid')
   products.forEach((product) => {
     totalHtml += `
           <div class="product-container">
@@ -13,7 +13,7 @@ function renderHomePage() {
                 src="${product.image}">
             </div>
 
-            <div class="product-name limit-text-to-2-lines">
+            <div class="product-name limit-text-to-2-lines" title="${product.name}">
               ${product.name}
             </div>
 
@@ -87,4 +87,43 @@ function renderHomePage() {
   updateCartQuantityElem();
 }
 
-loadProducts(renderHomePage);
+function searchNotFound() {
+  productGrid.innerHTML = `
+    <div class="search-not-found">
+      <p>Search Not Found.</p>
+      <button class="button-primary view-products-button js-view-products-button">
+        View Products
+      </button>
+    </div>
+  `
+  document.querySelector('.js-view-products-button')
+    .addEventListener('click', () => {
+      window.location.href = 'amazon.html'
+    });
+}
+const searchBar = document.querySelector('.js-search-bar');
+
+document.querySelector('.js-search-button')
+  .addEventListener('click', () => {
+    search(renderHomePage, searchBar.value);
+  })
+
+searchBar.addEventListener('keyup', (event) => {
+  if (event.key === 'Enter') {
+    search(renderHomePage, searchBar.value, searchNotFound);
+  }
+})
+
+function searchOnLoad() { 
+  const searchParam = new URLSearchParams(location.search);
+  const query = (searchParam.get('query'));
+  if (query) {
+    searchBar.value = query;
+    search(renderHomePage, searchBar.value);
+  }
+}
+
+loadProductsFetch().then((product) => {
+  renderHomePage(product);
+  searchOnLoad();
+});

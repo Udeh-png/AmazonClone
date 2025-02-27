@@ -1,7 +1,7 @@
 import { getProductWithId, loadProductsFetch } from "../data/products.js";
 import { formatCurrency } from "./utils/money.js";
 import { orders } from "../data/order.js";
-import { updateCartQuantityElem } from "./utils/amazonHeader.js";
+import { searchFromOtherPages, updateCartQuantityElem } from "./utils/amazonHeader.js";
 import { addToCart } from "../data/cart.js";
 
 function renderOrders() {
@@ -111,6 +111,8 @@ function renderOrders() {
       });
     });
 }
+
+searchFromOtherPages();
 
 loadProductsFetch().then(() => {
   renderOrders();
