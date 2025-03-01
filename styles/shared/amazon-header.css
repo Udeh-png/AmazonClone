@@ -161,7 +161,12 @@
   left: 0;
   right: 15%;
   top: 42px;
-  display: none;
+  max-height: 280px;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.15s, transform 0.15s;
+  pointer-events: none;
 }
 
 .previous-search{
@@ -173,9 +178,21 @@
   margin: 5px;
 }
 
-.show-search-suggestion{
-  display: initial;
+.previous-search > *{
+  cursor: pointer;
 }
+
+.show-search-suggestion{
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.previous-search.highlight {
+  background-color: #ddd; /* Highlight color */
+  color: black;
+}
+
 
 @media (max-width: 800px) {
   .search-suggestion{

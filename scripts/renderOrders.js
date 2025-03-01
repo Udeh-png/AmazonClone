@@ -1,8 +1,13 @@
 import { getProductWithId, loadProductsFetch } from "../data/products.js";
 import { formatCurrency } from "./utils/money.js";
 import { orders } from "../data/order.js";
-import { searchFromOtherPages, updateCartQuantityElem } from "./utils/amazonHeader.js";
+import { searchFromOtherPages, setUpSearchBar, updateCartQuantityElem } from "./utils/amazonHeader.js";
 import { addToCart } from "../data/cart.js";
+
+const searchBar = document.querySelector('.js-search-bar');
+const searchSuggestion = document.querySelector('.js-search-suggestion');
+const previousSearchList = document.querySelector('.js-previous-search-list');
+const searchButton = document.querySelector('.js-search-button');
 
 function renderOrders() {
   let products;
@@ -112,7 +117,8 @@ function renderOrders() {
     });
 }
 
-searchFromOtherPages();
+searchFromOtherPages(searchBar, searchButton);
+setUpSearchBar(searchBar, searchSuggestion, previousSearchList);
 
 loadProductsFetch().then(() => {
   renderOrders();

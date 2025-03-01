@@ -1,9 +1,14 @@
 import { addToCart } from "../data/cart.js";
 import { loadProductsFetch, products as mainProducts } from "../data/products.js";
-import { search, updateCartQuantityElem } from "./utils/amazonHeader.js";
+import { updateCartQuantityElem , previousSearches, setUpSearchBar} from "./utils/amazonHeader.js";
 
 const productGrid = document.querySelector('.js-product-grid')
-function renderHomePage(products=mainProducts) {
+const searchBar = document.querySelector('.js-search-bar');
+const searchButton = document.querySelector('.js-search-button');
+const previousSearchList = document.querySelector('.js-previous-search-list');
+const searchSuggestion = document.querySelector('.js-search-suggestion');
+
+function renderHomePage(products) {
   let totalHtml = '';
   products.forEach((product) => {
     totalHtml += `
@@ -87,6 +92,24 @@ function renderHomePage(products=mainProducts) {
   updateCartQuantityElem();
 }
 
+/* Search Code Start*/
+export function search(fun, query, fun1) {
+  if (query.trim()){
+    const filtered = mainProducts.filter((product) => {
+      return product.keywords.some((keyword) => {
+        return product.name.toLowerCase().includes(query) || keyword.toLowerCase().includes(query);
+      })
+    })
+    if (!previousSearches.includes(query)) {
+      previousSearches.unshift(query);
+      localStorage.setItem('previousSearches', JSON.stringify(previousSearches));
+    }
+    filtered.length ? fun(filtered) : fun1();
+  }else{
+    location.href = 'amazon.html'
+  }
+}
+
 function searchNotFound() {
   productGrid.innerHTML = `
     <div class="search-not-found">
@@ -95,23 +118,21 @@ function searchNotFound() {
         View Products
       </button>
     </div>
-  `
+  `;
   document.querySelector('.js-view-products-button')
     .addEventListener('click', () => {
-      window.location.href = 'amazon.html'
-    });
+      window.location.href = 'amazon.html';
+  });
 }
-const searchBar = document.querySelector('.js-search-bar');
 
-document.querySelector('.js-search-button')
-  .addEventListener('click', () => {
+  searchButton.addEventListener('click', () => {
     search(renderHomePage, searchBar.value);
   })
 
-searchBar.addEventListener('keyup', (event) => {
-  if (event.key === 'Enter') {
-    search(renderHomePage, searchBar.value, searchNotFound);
-  }
+  searchBar.addEventListener('keyup', (event) => {
+    if (event.key === 'Enter') {
+      search(renderHomePage, searchBar.value, searchNotFound);
+    }
 })
 
 function searchOnLoad() { 
@@ -122,6 +143,9 @@ function searchOnLoad() {
     search(renderHomePage, searchBar.value);
   }
 }
+
+setUpSearchBar(searchBar, searchSuggestion, previousSearchList);
+/* Search Code End */
 
 loadProductsFetch().then((product) => {
   renderHomePage(product);

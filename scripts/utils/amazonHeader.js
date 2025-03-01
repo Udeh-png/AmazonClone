@@ -1,5 +1,7 @@
 import { cart } from "../../data/cart.js";
-import { products } from "../../data/products.js";
+
+export const previousSearches = JSON.parse(localStorage.getItem('previousSearches')) || []
+
 export function updateCartQuantityElem() {
   let cartQuantity = 0;
     cart.forEach((cartItem) => {
@@ -12,32 +14,48 @@ export function updateCartQuantityElem() {
     }
 }
 
-export function search(fun, query, fun1) {
-  if (query.trim()){
-    const filtered = products.filter((product) => {
-      return product.keywords.some((keyword) => {
-        return product.name.toLowerCase().includes(query) || keyword.toLowerCase().includes(query);
-      })
-    })
-    filtered.length ? fun(filtered) : fun1();
-  }else{
-    fun(products)
-  }
-}
-
-export function searchFromOtherPages() {
-const searchBar = document.querySelector('.js-search-bar');
-
-document.querySelector('.js-search-button')
-  .addEventListener('click', () => {
-    if (searchBar.value.trim()) {
-      location.href = `amazon.html?query=${encodeURIComponent(searchBar.value)}`
-    }
+export function searchFromOtherPages(searchBar, searchButton) {
+    searchButton.addEventListener('click', () => {
+      location.href = searchBar.value.trim() ? `amazon.html?query=${encodeURIComponent(searchBar.value)}` : `amazon.html`
   });
 
   searchBar.addEventListener('keyup', (event) => {
-    if (event.key==='Enter' && searchBar.value.trim()) {
-      location.href = `amazon.html?query=${encodeURIComponent(searchBar.value)}`
+    if (event.key==='Enter') {
+      location.href = searchBar.value.trim() ? `amazon.html?query=${encodeURIComponent(searchBar.value)}` : `amazon.html`
+    }
+  });
+}
+
+function filterPreviousSearches(startsWith) {
+  const startsWithLowercase = startsWith.toLowerCase();
+  return previousSearches.filter((previousSearch) => previousSearch.startsWith(startsWithLowercase));
+}
+
+function renderPreviousSearches(array) {
+  return array.map((previousSearch) => 
+          `
+            <li class="previous-search">
+              <div class="limit-text-to-2-lines">${previousSearch}</div>
+              <div>&#10006;</div>
+            </li>
+          `
+        ).join('');
+}
+
+
+export function setUpSearchBar(searchBar, searchSuggestion, previousSearchList) {
+  searchBar.addEventListener('input', (event) => {
+    previousSearchList.innerHTML = renderPreviousSearches(filterPreviousSearches(event.target.value))
+  })
+  
+  searchBar.addEventListener('focus', () => {
+    searchSuggestion.classList.add('show-search-suggestion')
+    previousSearchList.innerHTML = !searchBar.value.trim() ? renderPreviousSearches(previousSearches) : renderPreviousSearches(filterPreviousSearches(searchBar.value)); 
+  });
+  
+  document.addEventListener('click', (event) => {
+    if (!document.querySelector('.js-search-div').contains(event.target)) {
+      searchSuggestion.classList.remove('show-search-suggestion');
     }
   });
 }

@@ -1,10 +1,15 @@
-import { getOrderProductWithId, getOrderWithId } from "../data/order.js";
-import { getProductWithId, loadProducts, loadProductsFetch } from "../data/products.js";
+import { getOrderProductWithId} from "../data/order.js";
+import { getProductWithId, loadProductsFetch } from "../data/products.js";
 import { searchFromOtherPages, updateCartQuantityElem } from "./utils/amazonHeader.js";
 
 const params = new URLSearchParams(window.location.search);
 const productId = params.get("productId");
 const orderId = params.get("orderId");
+
+const searchBar = document.querySelector('.js-search-bar');
+const searchSuggestion = document.querySelector('.js-search-suggestion');
+const previousSearchList = document.querySelector('.js-previous-search-list');
+const searchButton = document.querySelector('.js-search-button');
 
 function renderTrackingPage() {
   const orderProduct = getOrderProductWithId(orderId, productId);
@@ -48,7 +53,8 @@ function renderTrackingPage() {
   updateCartQuantityElem();
 }
 
-searchFromOtherPages();
+searchFromOtherPages(searchBar, searchButton);
+setUpSearchBar(searchBar, searchSuggestion, previousSearchList);
 
 loadProductsFetch().then(() => {
   renderTrackingPage();
