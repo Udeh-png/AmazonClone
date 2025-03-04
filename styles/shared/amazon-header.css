@@ -64,6 +64,7 @@
   max-width: 850px;
   margin-left: 10px;
   margin-right: 10px;
+  width: fit-content;
   display: flex;
   position: relative;
 }
@@ -191,6 +192,13 @@
 .previous-search.highlight {
   background-color: #ddd; /* Highlight color */
   color: black;
+}
+
+.previous-search-button{
+  background-color: inherit;
+  text-align: left;
+  border: none;
+  font-size: inherit;
 }
 
 

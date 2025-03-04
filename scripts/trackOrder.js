@@ -1,6 +1,6 @@
 import { getOrderProductWithId} from "../data/order.js";
 import { getProductWithId, loadProductsFetch } from "../data/products.js";
-import { searchFromOtherPages, updateCartQuantityElem } from "./utils/amazonHeader.js";
+import { searchFromOtherPages, updateCartQuantityElem, setUpSearchBar } from "./utils/amazonHeader.js";
 
 const params = new URLSearchParams(window.location.search);
 const productId = params.get("productId");

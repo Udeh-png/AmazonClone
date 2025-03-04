@@ -93,7 +93,7 @@ function renderHomePage(products) {
 }
 
 /* Search Code Start*/
-export function search(fun, query, fun1) {
+export function search(fun = renderHomePage, query = searchBar.value, fun1 = searchNotFound) {
   if (query.trim()){
     const filtered = mainProducts.filter((product) => {
       return product.keywords.some((keyword) => {
@@ -126,7 +126,7 @@ function searchNotFound() {
 }
 
   searchButton.addEventListener('click', () => {
-    search(renderHomePage, searchBar.value);
+    search(renderHomePage, searchBar.value, searchNotFound);
   })
 
   searchBar.addEventListener('keyup', (event) => {
@@ -140,11 +140,11 @@ function searchOnLoad() {
   const query = (searchParam.get('query'));
   if (query) {
     searchBar.value = query;
-    search(renderHomePage, searchBar.value);
+    search(renderHomePage, searchBar.value, searchNotFound);
   }
 }
 
-setUpSearchBar(searchBar, searchSuggestion, previousSearchList);
+setUpSearchBar(searchBar, searchSuggestion, previousSearchList, search);
 /* Search Code End */
 
 loadProductsFetch().then((product) => {
