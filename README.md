@@ -15,6 +15,9 @@ Includes a cart page, track order page and much more all done to look and feel m
 - Javascript
 - Jasmine
 
+## 🔗 Live Demo
+[Click me](https://myamazonapp.vercel.app)
+
 ## 📂 Installation
 
 1. Clone the repo
